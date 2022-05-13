@@ -1,13 +1,8 @@
-mutable struct BST
-    n::Int
-    upper::Union{BST, Nothing}
-    left::Union{BST, Nothing}
-    right::Union{BST, Nothing}
-end
-function BST(n::Int)
-    return BST(n,nothing,nothing,nothing)
-end
+include("BST.jl")
+include("Printer.jl")
+global size = 0
 function insert(node::BST, value::Int)
+    global size += 1
     pointer = node
     while true
         if value >= pointer.n
@@ -135,10 +130,16 @@ function delete(node::Union{BST,Nothing}, value::Int)
     end
     return node
 end
-a = BST(10)
+a = BST(25)
+insert(a,12)
 insert(a,15)
-insert(a,13)
-insert(a,16)
-println(maxDepth(a))
-a = delete(a,15)
-println(a)
+insert(a,32)
+insert(a,40)
+insert(a,36)
+insert(a,1)
+insert(a,8)
+insert(a,37)
+#caller(a,1,'-',size)
+a = delete(a,37)
+global size -= 1
+caller(a,1,'-',size)
