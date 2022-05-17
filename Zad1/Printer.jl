@@ -1,4 +1,3 @@
-include("BST.jl")
 global left_trace = Array{Char,1}()
 global right_trace = Array{Char,1}()
 function print_BST(root::Union{BST,Nothing},depth::Int,prefix::Char)
@@ -15,9 +14,9 @@ function print_BST(root::Union{BST,Nothing},depth::Int,prefix::Char)
         right_trace[depth-1]=' '
     end
     if depth > 1 
-        print(" ")
+        print("  ")
     end
-    for i in 1:depth-1
+    for i in 1:depth-2
         if left_trace[i]== '|' || right_trace[i] =='|' 
             print("| ")
         else

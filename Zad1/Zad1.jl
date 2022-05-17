@@ -142,4 +142,4 @@ insert(a,37)
 #caller(a,1,'-',size)
 a = delete(a,37)
 global size -= 1
-caller(a,1,'-',size)
+caller(a,1,' ',size)
