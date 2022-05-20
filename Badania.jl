@@ -16,20 +16,23 @@ function badanie_BST()
     weird_comparisionsD = copy(comparisionsI)
     heightsD = copy(comparisionsI)
     for j in 1:20
+        println("Iteration for BST: ", j)
         b = BST.BST()
-        for i in 1:100000
+        counter = 0
+        for i in shuffle(1:100000)
             BST.insert(b,i)
-            comparisionsI[i] += BST.comparisions
-            weird_comparisionsI[i] += BST.weird_comparisions
-            heightsI[i] += BST.treeHeight(b)
+            comparisionsI[1+counter] += BST.comparisions
+            weird_comparisionsI[1+counter] += BST.weird_comparisions
+            heightsI[1+counter] += BST.treeHeight(b)
             BST.reset_globals()
+            counter+=1
         end
         counter = 0
         for i in shuffle(1:100000-1)
             b = BST.delete(b,i)
-            comparisionsD[100000-i] += BST.comparisions
-            weird_comparisionsD[100000-i] += BST.weird_comparisions
-            heightsD[100000-i] += BST.treeHeight(b)
+            comparisionsD[100000-counter] += BST.comparisions
+            weird_comparisionsD[100000-counter] += BST.weird_comparisions
+            heightsD[100000-counter] += BST.treeHeight(b)
             BST.reset_globals()
             counter += 1
         end
@@ -54,20 +57,22 @@ function badanie_RBT()
     weird_comparisionsD = copy(comparisionsI)
     heightsD = copy(comparisionsI)
     for j in 1:20
+        println("Iteration for RBT: ", j)
         b = RBT.RBTREE()
-        for i in 1:100000
+        counter = 0
+        for i in shuffle(1:100000)
             RBT.insert(b,i)
-            comparisionsI[i] += RBT.comparisions
-            weird_comparisionsI[i] += RBT.weird_comparisions
-            heightsI[i] += RBT.treeHeight(b)
+            comparisionsI[1+counter] += RBT.comparisions
+            weird_comparisionsI[1+counter] += RBT.weird_comparisions
+            heightsI[1+counter] += RBT.treeHeight(b)
             RBT.reset_globals()
         end
         counter = 0
         for i in shuffle(1:100000-1)
             RBT.delete(b,i)
-            comparisionsD[100000-i] += RBT.comparisions
-            weird_comparisionsD[100000-i] += RBT.weird_comparisions
-            heightsD[100000-i] += RBT.treeHeight(b)
+            comparisionsD[100000-counter] += RBT.comparisions
+            weird_comparisionsD[100000-counter] += RBT.weird_comparisions
+            heightsD[100000-counter] += RBT.treeHeight(b)
             RBT.reset_globals()
             counter += 1
         end
@@ -92,20 +97,22 @@ function badanie_SPT()
     weird_comparisionsD = copy(comparisionsI)
     heightsD = copy(comparisionsI)
     for j in 1:20
+        println("Iteration for SPT: ", j)
         b = SPT.SplayTree()
-        for i in 1:100000
+        counter = 0
+        for i in shuffle(1:100000)
             SPT.insert(b,i)
-            comparisionsI[i] += SPT.comparisions
-            weird_comparisionsI[i] += SPT.weird_comparisions
-            heightsI[i] += SPT.treeHeight(b)
+            comparisionsI[1+counter] += SPT.comparisions
+            weird_comparisionsI[1+counter] += SPT.weird_comparisions
+            heightsI[1+counter] += SPT.treeHeight(b)
             SPT.reset_globals()
         end
         counter = 0
         for i in shuffle(1:100000-1)
             SPT.delete(a,i)
-            comparisionsD[100000-i] += SPT.comparisions
-            weird_comparisionsD[100000-i] += SPT.weird_comparisions
-            heightsD[100000-i] += SPT.treeHeight(b)
+            comparisionsD[100000-counter] += SPT.comparisions
+            weird_comparisionsD[100000-counter] += SPT.weird_comparisions
+            heightsD[100000-counter] += SPT.treeHeight(b.root)
             SPT.reset_globals()
             counter += 1
         end
@@ -125,24 +132,24 @@ end
 function badanie()
     lk = ReentrantLock()
     Threads.@threads for i in 1:3
-        if i==1
+        if Threads.threadid() == 1
             result = badanie_BST()
             lock(lk)
-                open("BSTResultsAR.json", "w") do io
+                open("BSTResultsRR.json", "w") do io
                     JSON.print(io, result)
                 end
             unlock(lk)
-        elseif i==2
+        elseif Threads.threadid() == 2
             result2 = badanie_RBT()
             lock(lk)
-                open("RBTResultsAR.json", "w") do io
+                open("RBTResultsRR.json", "w") do io
                     JSON.print(io, result2)
                 end
             unlock(lk)
         else
             result3 = badanie_SPT()
             lock(lk)
-                open("SPTResultsAR.json", "w") do io
+                open("SPTResultsRR.json", "w") do io
                     JSON.print(io, result3)
                 end
             unlock(lk)
