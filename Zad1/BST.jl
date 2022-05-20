@@ -1,11 +1,8 @@
 mutable struct BST
-    n::Int
+    n::Union{Int,Nothing}
     upper::Union{BST, Nothing}
     left::Union{BST, Nothing}
     right::Union{BST, Nothing}
-end
-
-
-function BST(n::Int)
-    return BST(n,nothing,nothing,nothing)
+    BST() = new(nothing,nothing,nothing,nothing)
+    BST(value::Int) = new(value,nothing,nothing,nothing)
 end

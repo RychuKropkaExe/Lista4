@@ -1,0 +1,5 @@
+include("delete.jl")
+include("Printer.jl")
+include("rotates.jl")
+include("Insert.jl")
+include("SplayTree.jl")

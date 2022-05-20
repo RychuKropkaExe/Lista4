@@ -13,5 +13,6 @@ end
 
 mutable struct SplayTree
     root::SPT
-    SplayTree() = new(SPT())
+    size::Int
+    SplayTree() = new(SPT(),0)
 end
