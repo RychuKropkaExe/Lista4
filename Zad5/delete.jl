@@ -87,62 +87,56 @@ function new_root(left_node::Union{SPT,Nothing}, right_node::Union{SPT,Nothing})
         return left_node
     end
 end
-function delete(tree::SplayTree, value::Int)
-    global weird_comparisions += 1
-    pointer = tree.root
-    while !isnothing(pointer)
+function maximum_node(node::Union{SPT, Nothing})
+    (isnothing(node)) && return node
+    while !isnothing(node.right)
         global weird_comparisions += 1
-        global comparisions += 1
-        if pointer.n == value
-            global weird_comparisions += 1
-            if !isnothing(pointer.upper)
-                global weird_comparisions += 2
-                if isnothing(pointer.right) && isnothing(pointer.left)
-                    if match(pointer.upper,pointer) == 1
-                        global weird_comparisions += 1
-                        pointer = pointer.upper 
-                        global weird_comparisions += 1
-                        pointer.right = nothing
-                    else
-                        global weird_comparisions += 1
-                        pointer = pointer.upper 
-                        global weird_comparisions += 1
-                        pointer.left = nothing
-                    end
-                else
-                    if match(pointer.upper,pointer) == 1
-                        global weird_comparisions += 1
-                        pointer = merge(pointer.upper,pointer)
-                    else
-                        global weird_comparisions += 1
-                        pointer = merge(pointer.upper,pointer)
-                    end
-                end
-                tree.size -= 1
-                splay(tree, pointer)
-                return true
-            else
-                global weird_comparisions += 1
-                root = new_root(pointer.left,pointer.right)
-                if isnothing(root)
-                    global weird_comparisions += 1
-                    tree.root = SPT()
-                else
-                    global weird_comparisions += 1
-                    tree.root = root
-                end  
-                return true
-            end
-        else
-            global comparisions += 1
-            if pointer.n <= value
-                global weird_comparisions += 1
-                pointer = pointer.right
-            else
-                global weird_comparisions += 1
-                pointer = pointer.left
-            end
-        end
+        node = node.right
     end
-    return false
+    return node
+end
+function _join!(tree::SplayTree, s::Union{SPT, Nothing}, t::Union{SPT, Nothing})
+    global weird_comparisions += 1
+    if s === nothing
+        return t
+    elseif t === nothing
+        global weird_comparisions += 1
+        return s
+    else
+        global weird_comparisions += 1
+        x = maximum_node(s)
+        splay(tree, x)
+        global weird_comparisions += 1
+        x.right = t
+        global weird_comparisions += 1
+        t.upper = x
+        return x
+    end
+end
+function delete(tree::SplayTree, d::Int)
+    node = tree.root
+    if isnothing(node.left) && isnothing(node.right) && node.n == d
+        node.n = nothing
+        return
+    end
+    x = search_node(tree, d)
+    isnothing(x) && return tree
+    t = nothing
+    s = nothing
+    splay(tree, x)
+    if x.right !== nothing
+        t = x.right
+        t.upper = nothing
+    end
+
+    s = x
+    s.right = nothing
+
+    if s.left !== nothing
+        s.left.upper = nothing
+    end
+    if !isnothing(t) || !isnothing(s.left)
+        tree.root = _join!(tree, s.left, t)
+    end
+    return tree
 end

@@ -84,7 +84,7 @@ function treeHeight(root::Union{BST,Nothing})
 end
 
 function merge(upper_node::Union{BST,Nothing}, node::Union{BST,Nothing})
-    pointer = upper_node
+    pointer = node.upper
     if match(upper_node, node) == 1
         global weird_comparisions += 1
         if !isnothing(node.right)
@@ -173,20 +173,23 @@ function delete(node::Union{BST,Nothing}, value::Int)
                     if match(pointer.upper,pointer) == 1
                         global weird_comparisions += 1
                         pointer.upper.right = nothing
+                        return node
                     else
                         global weird_comparisions += 1
                         pointer.upper.left = nothing
+                        return node
                     end
                 else
                     if match(pointer.upper,pointer) == 1
                         global weird_comparisions += 1
                         pointer = merge(pointer.upper,pointer)
+                        return node
                     else
                         global weird_comparisions += 1
                         pointer = merge(pointer.upper,pointer)
+                        return node
                     end
                 end
-                return node
             else
                 global weird_comparisions += 1
                 return new_root(pointer,pointer.left,pointer.right)
@@ -208,4 +211,80 @@ function reset_globals()
     global comparisions = 0
     global weird_comparisions = 0
 end
+
+function deleteIterative(root, key)
+    global weird_comparisions += 1
+    curr = root
+    prev = nothing
+    while !isnothing(curr) && curr.n != key
+        global weird_comparisions += 1
+        prev = curr
+        global comparisions += 1
+        if curr.n < key
+            global weird_comparisions += 1
+            curr = curr.right
+        else
+            global weird_comparisions += 1
+            curr = curr.left
+        end
+    end
+    global weird_comparisions += 1
+    if isnothing(curr)
+        return root
+    end
+    global weird_comparisions += 2
+    if isnothing(curr.left) || isnothing(curr.right)
+        newCurr = nothing
+        if isnothing(curr.left)
+            global weird_comparisions += 1
+            newCurr = curr.right
+        else
+            global weird_comparisions += 1
+            newCurr = curr.left
+        end
+
+        global weird_comparisions += 1
+        if isnothing(prev)
+            return newCurr
+        end
+        global weird_comparisions += 1
+        if curr == prev.left
+            global weird_comparisions += 1
+            prev.left = newCurr
+        else
+            global weird_comparisions += 1
+            prev.right = newCurr
+        end
+        global weird_comparisions += 1
+        curr = nothing
+    else
+        p = nothing
+        temp = nothing
+ 
+        # Compute the inorder
+        # successor of curr.
+        global weird_comparisions += 1
+        temp = curr.right
+        while !isnothing(temp.left)
+            global weird_comparisions += 2
+            p = temp
+            temp = temp.left
+        end
+        if !isnothing(p)
+            global weird_comparisions += 1
+            p.left = temp.right
+ 
+        else
+            global weird_comparisions += 1
+            curr.right = temp.right
+        end
+        global weird_comparisions += 1
+        curr.n = temp.n
+        temp = nothing
+    end
+    return root
+end
+
+
+
 
